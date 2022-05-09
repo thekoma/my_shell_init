@@ -2,10 +2,6 @@
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 
-export CLOUDSDK_HOME="$(readlink -f $(which gcloud) |sed 's#/bin/gcloud##')"
-GCLOUD_COMPLETION=/usr/share/google-cloud-sdk/path.zsh.inc
-if [ -f $GCLOUD_COMPLETION ]; then source $GCLOUD_COMPLETION; fi
-export gcloud_sdk_location=$CLOUDSDK_HOME
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -21,7 +17,6 @@ plugins=(
   gcloud
   sudo
   vscode
-  ssh-agent
   docker-compose
   brew
   themes
@@ -37,6 +32,6 @@ source <(KUBECONFIG=/dev/null kubectl completion zsh)
 export PATH="${PATH}:${HOME}/.krew/bin"
 
 # aliases
-alias cat=bat
+alias cat=batcat
 alias k=kubectl
 alias vi=vim
