@@ -72,7 +72,7 @@ function configure_zsh() {
   fi
   ln -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
 
-  if [ ! -f $HOME/.p10k.zsh ]; then
+  if [ -f $HOME/.p10k.zsh ]; then
     mv $HOME/.p10k.zsh $HOME/.p10k.zsh-$(date +%F)
   fi
   ln -sf $SCRIPT_HOME/p10k.zsh $HOME/.p10k.zsh
