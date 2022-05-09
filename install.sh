@@ -79,7 +79,7 @@ function switch_shell() {
 
 function install_myself() {
   # I need a couple sha512
-  ME=$0
+  ME=$SOURCE
   ME_FULL_SHA=$(sha512sum $ME)
   ME_SHA=${ME_FULL_SHA:0:129}
 
