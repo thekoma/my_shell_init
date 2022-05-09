@@ -103,7 +103,7 @@ function install_myself() {
     ln -sf $ME $INIT_SCRIPT
   fi
 
-  if [ "$(crontab -l|grep -c $SCRIPT_HOME)" -lt 1 ]; then
+  if [ "$(crontab -l -u $USER|grep -c $SCRIPT_HOME)" -lt 1 ]; then
     CRONTMP=$(mktemp)
     crontab -l -u $USER |grep -v $SCRIPT_HOME > $CRONTMP
     echo  -e "# Update shell init git\n0,15,30,45 * * * * git -C $SCRIPT_HOME pull -q" >> $CRONTMP
