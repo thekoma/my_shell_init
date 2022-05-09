@@ -64,11 +64,11 @@ function install_omz() {
 
 function configure_zsh() {
   if [ ! -f $HOME/.zshrc ]; then
-    ls -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
+    ln -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
   fi
 
   if [ ! -f $HOME/.p10k.zsh ]; then
-    ls -sf $SCRIPT_HOME/p10k.zsh $HOME/.p10k.zsh
+    ln -sf $SCRIPT_HOME/p10k.zsh $HOME/.p10k.zsh
   fi
 }
 
