@@ -9,7 +9,7 @@ done
 SCRIPT_HOME=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
 function shutup_on_apt() {
-    if [ ! -f ~/.cloudshell ]; then mkdir ~/.cloudshell; fi
+    if [ ! -d ~/.cloudshell ]; then mkdir ~/.cloudshell; fi
     touch ~/.cloudshell/no-apt-get-warning
 }
 
