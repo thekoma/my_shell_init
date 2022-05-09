@@ -99,17 +99,17 @@ function install_myself() {
 
 function main() {
     INSTALL=0
-    command -v zsh || INSTALL=1
+    command zsh || INSTALL=1
     if [ $INSTALL -gt 0 ] || [ ${FORCE:-0} -gt 0 ]; then
         echo "Installing utils via pkg manager"
-        install_utils_apt >/dev/null #2>&1
+        install_utils_apt >/dev/null
         echo "Installing ZSH via curl"
-        install_omz  >/dev/null #2>&1
-        configure_zsh  >/dev/null #2>&1
+        install_omz  >/dev/null
+        configure_zsh  >/dev/null
         echo "Installing KubeUtils via curl"
-        install_krew  >/dev/null #2>&1
-        install_krew_utils  >/dev/null #2>&1
-        switch_shell  >/dev/null #2>&1
+        install_krew  >/dev/null
+        install_krew_utils  >/dev/null
+        switch_shell  >/dev/null
     fi
     install_myself
 }
