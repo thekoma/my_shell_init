@@ -84,10 +84,8 @@ function install_myself() {
   ME_SHA=${ME_FULL_SHA:0:129}
 
   INIT_SCRIPT="$HOME/.customize_environment"
-  INIT_SCRIPT_FULL_SHA=$(sha512sum $INIT_SCRIPT)
- 
-
   if [ -f $INIT_SCRIPT ]; then
+    INIT_SCRIPT_FULL_SHA=$(sha512sum $INIT_SCRIPT)
     INIT_SCRIPT_SHA=${INIT_SCRIPT_FULL_SHA:0:129}
   else
     INIT_SCRIPT_SHA=0
