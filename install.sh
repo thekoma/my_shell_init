@@ -112,6 +112,10 @@ function install_myself() {
 }
 
 function main() {
+    if [ ! $GOOGLE_CLOUD_SHELL ]; then
+      echo -e "I've been written for Google Cloud Shell.\nIf you want to proceed\nexport GOOGLE_CLOUD_SHELL=true"
+      exit 0
+    fi
     INSTALL=0
     which zsh > /dev/null || INSTALL=1  2>&1
     if [ $INSTALL -gt 0 ] || [ ${FORCE:-0} -gt 0 ]; then
