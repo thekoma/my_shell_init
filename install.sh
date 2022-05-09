@@ -92,7 +92,7 @@ function install_myself() {
   fi
 
   if [ $ME_SHA != $INIT_SCRIPT_SHA ]; then
-    ls -sf $ME $INIT_SCRIPT
+    ln -sf $ME $INIT_SCRIPT
   fi
 
 }
