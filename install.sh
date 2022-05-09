@@ -105,7 +105,7 @@ function install_myself() {
 
 function main() {
     INSTALL=0
-    command zsh || INSTALL=1 2>&1
+    which zsh > /dev/null || INSTALL=1  2>&1
     if [ $INSTALL -gt 0 ] || [ ${FORCE:-0} -gt 0 ]; then
         echo "Installing utils via pkg manager"
         install_utils_apt >/dev/null
@@ -119,7 +119,6 @@ function main() {
     fi
     install_myself
 }
-
 
 set -e
 main
