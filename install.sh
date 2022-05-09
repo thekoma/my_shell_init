@@ -79,7 +79,7 @@ function switch_shell() {
 
 function install_myself() {
   # I need a couple sha512
-  ME=$SCRIPT_HOME/$(basename $0)
+  ME=$0
   ME_FULL_SHA=$(sha512sum $ME)
   ME_SHA=${ME_FULL_SHA:0:129}
 
@@ -104,8 +104,8 @@ function main() {
         echo "Installing utils via pkg manager"
         install_utils_apt >/dev/null #2>&1
         echo "Installing ZSH via curl"
-        configure_zsh  >/dev/null #2>&1
         install_omz  >/dev/null #2>&1
+        configure_zsh  >/dev/null #2>&1
         echo "Installing KubeUtils via curl"
         install_krew  >/dev/null #2>&1
         install_krew_utils  >/dev/null #2>&1
