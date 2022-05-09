@@ -58,18 +58,24 @@ function install_krew_utils() {
 }
 
 function install_omz() {
+  if [ -d $HOME/.oh-my-zsh ]; then
+    mv $HOME/.oh-my-zsh $HOME/.oh-my-zsh-$(date +%F)
+  fi
+  
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 }
 
 function configure_zsh() {
-  if [ ! -f $HOME/.zshrc ]; then
-    ln -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
+  if [ -f $HOME/.zshrc ]; then
+    mv $HOME/.zshrc $HOME/.zshrc-$(date +%F)
   fi
+  ln -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
 
   if [ ! -f $HOME/.p10k.zsh ]; then
-    ln -sf $SCRIPT_HOME/p10k.zsh $HOME/.p10k.zsh
+    mv $HOME/.p10k.zsh $HOME/.p10k.zsh-$(date +%F)
   fi
+  ln -sf $SCRIPT_HOME/p10k.zsh $HOME/.p10k.zsh
 }
 
 function switch_shell() {
