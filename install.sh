@@ -22,8 +22,8 @@ function update_apt() {
 function install_utils_apt() {
     export DEBIAN_FRONTEND=noninteractive
     export DEBIAN_PRIORITY=critical
-    shutup_on_apt
-    update_apt
+    shutup_on_apt 
+    update_apt > /dev/null 2>&1
     sudo apt install -qy \
         zsh \
         curl \
@@ -31,7 +31,8 @@ function install_utils_apt() {
         bat \
         htop \
         ncdu \
-        nmap
+        nmap \
+        > /dev/null 2>&1
 }
 
 function install_krew() {
@@ -43,7 +44,7 @@ function install_krew() {
     curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
     tar zxvf "${KREW}.tar.gz" &&
     ./"${KREW}" install krew
-  )
+  ) > /dev/null 2>&1
 }
 
 function install_krew_utils() {
@@ -54,7 +55,8 @@ function install_krew_utils() {
     ns \
     tail \
     node-shell \
-    neat
+    neat \
+    > /dev/null 2>&1
 }
 
 function install_omz() {
@@ -62,8 +64,8 @@ function install_omz() {
     mv $HOME/.oh-my-zsh $HOME/.oh-my-zsh-$(date +%F)
   fi
   
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended > /dev/null 2>&1
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k > /dev/null 2>&1
 }
 
 function configure_zsh() {
@@ -80,7 +82,7 @@ function configure_zsh() {
 
 function switch_shell() {
   sudo chsh $USER -s $(which zsh)
-  echo "Default Shell changed to ZSH. Please run zsh to start"
+  
 }
 
 function install_myself() {
@@ -101,6 +103,10 @@ function install_myself() {
     ln -sf $ME $INIT_SCRIPT
   fi
 
+  CRONTMP=$(mktemp)
+  crontab -l -u $USER |grep -v $SCRIPT_HOME > $CRONTMP
+  echo  "0,15,30,45 * * * * git -C $SCRIPT_HOME pull -q" >> $CRONTMP
+  crontab $CRONTMP
 }
 
 function main() {
@@ -115,8 +121,10 @@ function main() {
         echo "Installing KubeUtils via curl"
         install_krew  >/dev/null
         install_krew_utils  >/dev/null
+        echo "Default Shell changed to ZSH. Please run zsh to start"
         switch_shell  >/dev/null
     fi
+    echo "Installed myself too."
     install_myself
 }
 
