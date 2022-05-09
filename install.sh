@@ -78,15 +78,23 @@ function switch_shell() {
 }
 
 function install_myself() {
-  SHA_SCRIPT=${$(sha512sum $SCRIPT_HOME/$(basename $0)):0:129}
-  if [ -f $HOME/.customize_environment ]; then
-    SHA_INSTALLER=${$(sha512sum $HOME/.customize_environment):0:129}
+  # I need a couple sha512
+  ME=$SCRIPT_HOME/$(basename $0)
+  ME_FULL_SHA=$(sha512sum $ME)
+  ME_SHA=${ME_FULL_SHA:0:129}
+
+  INIT_SCRIPT="$HOME/.customize_environment"
+  INIT_SCRIPT_FULL_SHA=$(sha512sum $INIT_SCRIPT)
+ 
+
+  if [ -f $INIT_SCRIPT ]; then
+    INIT_SCRIPT_SHA=${INIT_SCRIPT_FULL_SHA:0:129}
   else
-    SHA_INSTALLER=0
+    INIT_SCRIPT_SHA=0
   fi
 
-  if [ $SHA_SCRIPT != $SHA_INSTALLER ]; then
-    ls -sf $SCRIPT_HOME/install.sh $HOME/.customize_environment
+  if [ $ME_SHA != $INIT_SCRIPT_SHA ]; then
+    ls -sf $ME $INIT_SCRIPT
   fi
 
 }
