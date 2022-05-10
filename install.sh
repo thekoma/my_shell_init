@@ -19,23 +19,32 @@ HOMEDIR=$(eval echo ~$SHELLUSER)
 
 
 function shutup_on_apt() {
-    echo "Disable APT warning."
-    if [ ! -d ~/.cloudshell ]; then mkdir ~/.cloudshell; fi
-    touch ~/.cloudshell/no-apt-get-warning
+    if [ ! -d $HOMEDIR/.cloudshell ]; then mkdir $HOMEDIR/.cloudshell; fi
+    if [ ! -f $HOMEDIR/.cloudshell/no-apt-get-warning ]; then
+      echo "Disable APT warning."
+      touch $HOMEDIR/.cloudshell/no-apt-get-warning
+    fi
 }
 
 function update_apt() {
     export DEBIAN_FRONTEND=noninteractive
     export DEBIAN_PRIORITY=critical
-    echo "Updating pkg manager db"
-    sudo -E apt-get -qy update 
+    LAST_UPD=$(date +%s -d "$(ls -lt --time-style="long-iso" /var/log/apt | grep -o '\([0-9]\{2,4\}[- ]\)\{3\}[0-9]\{2\}:[0-9]\{2\}' -m 1)")
+    NOW=$(date +%s)
+    DIFF=$(expr $NOW - $LAST_UPD)
+    if [ $DIFF -lt 3600 ]; then
+      echo "Skipping update db is fresh (less than 60 minutes)"
+    else
+      echo "Updating pkg manager db"
+      sudo -E apt-get -qy update > /dev/null 2>&1
+    fi
 }
 
 function install_utils_apt() {
     export DEBIAN_FRONTEND=noninteractive
     export DEBIAN_PRIORITY=critical
-    shutup_on_apt 
-    update_apt > /dev/null 2>&1
+    shutup_on_apt
+    update_apt
     echo "Installing or updating utils via pkg manager"
     sudo apt install -qy \
         zsh \
@@ -75,7 +84,6 @@ function install_krew_utils() {
 }
 
 function install_omz() {
-
   if [ -d $HOMEDIR/.oh-my-zsh ]; then
     echo "Backup old ohmyzsh and p10k scripts"
     mv $HOMEDIR/.oh-my-zsh $HOMEDIR/.oh-my-zsh-$RUNT
@@ -105,7 +113,6 @@ function configure_zsh() {
 function switch_shell() {
   echo "Changing default shell to zsh"
   sudo chsh $SHELLUSER -s $(which zsh)
-  
 }
 
 function install_myself() {
