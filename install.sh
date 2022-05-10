@@ -9,6 +9,15 @@ done
 SCRIPT_HOME=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 RUNT=$(date +%F_%H-%M-%S)
 
+if [ $SHELLUSER == "root" ]; then
+  SHELLUSER=$SUDO_USER
+else
+  SHELLUSER=$SHELLUSER
+fi
+
+HOMEDIR=$(eval echo ~$SHELLUSER)
+
+
 function shutup_on_apt() {
     echo "Disable APT warning."
     if [ ! -d ~/.cloudshell ]; then mkdir ~/.cloudshell; fi
@@ -54,7 +63,7 @@ function install_krew() {
 
 function install_krew_utils() {
   echo "Installing or updating krew plugins"
-  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+  export PATH="${KREW_ROOT:-$HOMEDIR/.krew}/bin:$PATH"
   kubectl krew install -v=0 \
     sniff \
     ctx \
@@ -67,32 +76,32 @@ function install_krew_utils() {
 
 function install_omz() {
 
-  if [ -d $HOME/.oh-my-zsh ]; then
+  if [ -d $HOMEDIR/.oh-my-zsh ]; then
     echo "Backup old ohmyzsh and p10k scripts"
-    mv $HOME/.oh-my-zsh $HOME/.oh-my-zsh-$RUNT
+    mv $HOMEDIR/.oh-my-zsh $HOMEDIR/.oh-my-zsh-$RUNT
   fi
   echo "Installing ohmyzsh and p10k scripts"
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended > /dev/null 2>&1
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k > /dev/null 2>&1
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOMEDIR/.oh-my-zsh/custom}/themes/powerlevel10k > /dev/null 2>&1
 }
 
 function configure_zsh() {
   echo "Installing ohmyzsh profile"
-  if [ -f $HOME/.zshrc ]; then
-    mv $HOME/.zshrc $HOME/.zshrc-$RUNT
+  if [ -f $HOMEDIR/.zshrc ]; then
+    mv $HOMEDIR/.zshrc $HOMEDIR/.zshrc-$RUNT
   fi
-  ln -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
+  ln -sf $SCRIPT_HOME/zshrc.sh $HOMEDIR/.zshrc
   
   echo "Installing p10k profile"
-  if [ -f $HOME/.p10k.zsh ]; then
-    mv $HOME/.p10k.zsh $HOME/.p10k.zsh-$(date +%F)
+  if [ -f $HOMEDIR/.p10k.zsh ]; then
+    mv $HOMEDIR/.p10k.zsh $HOMEDIR/.p10k.zsh-$(date +%F)
   fi
-  ln -sf $SCRIPT_HOME/p10k.zsh $HOME/.p10k.zsh
+  ln -sf $SCRIPT_HOME/p10k.zsh $HOMEDIR/.p10k.zsh
 }
 
 function switch_shell() {
   echo "Changing default shell to zsh"
-  sudo chsh $USER -s $(which zsh)
+  sudo chsh $SHELLUSER -s $(which zsh)
   
 }
 
@@ -102,7 +111,7 @@ function install_myself() {
   ME_FULL_SHA=$(sha512sum $ME)
   ME_SHA=${ME_FULL_SHA:0:129}
 
-  INIT_SCRIPT="$HOME/.customize_environment"
+  INIT_SCRIPT="$HOMEDIR/.customize_environment"
   if [ -f $INIT_SCRIPT ]; then
     INIT_SCRIPT_FULL_SHA=$(sha512sum $INIT_SCRIPT)
     INIT_SCRIPT_SHA=${INIT_SCRIPT_FULL_SHA:0:129}
@@ -115,13 +124,17 @@ function install_myself() {
     ln -sf $ME $INIT_SCRIPT
   fi
 
-  if [ "$(crontab -l -u $USER|grep -c $SCRIPT_HOME)" -lt 1 ]; then
+  if [ "$(crontab -l -u $SHELLUSER|grep -c $SCRIPT_HOME)" -lt 1 ]; then
     echo "Installing crontab"
     CRONTMP=$(mktemp)
-    crontab -l -u $USER |grep -v $SCRIPT_HOME > $CRONTMP
+    crontab -l -u $SHELLUSER |grep -v $SCRIPT_HOME > $CRONTMP
     echo  -e "# Update shell init git\n0,15,30,45 * * * * git -C $SCRIPT_HOME pull -q" >> $CRONTMP
     crontab $CRONTMP
   fi
+}
+
+function correct_permissions() {
+  sudo chwon -R $SHELLUSER:$SHELLUSER $HOMEDIR
 }
 
 function main() {
@@ -143,6 +156,7 @@ function main() {
         echo "ZSH is present. Assuming I'm already installed."
     fi
     install_myself
+    correct_permissions
 }
 
 main
