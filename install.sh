@@ -7,6 +7,7 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
   [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
 SCRIPT_HOME=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+RUNT=$(date +%F_%H-%M-%S)
 
 function shutup_on_apt() {
     echo "Disable APT warning."
@@ -68,7 +69,7 @@ function install_omz() {
 
   if [ -d $HOME/.oh-my-zsh ]; then
     echo "Backup old ohmyzsh and p10k scripts"
-    mv $HOME/.oh-my-zsh $HOME/.oh-my-zsh-$(date +%F)
+    mv $HOME/.oh-my-zsh $HOME/.oh-my-zsh-$RUNT
   fi
   echo "Installing ohmyzsh and p10k scripts"
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended > /dev/null 2>&1
@@ -78,7 +79,7 @@ function install_omz() {
 function configure_zsh() {
   echo "Installing ohmyzsh profile"
   if [ -f $HOME/.zshrc ]; then
-    mv $HOME/.zshrc $HOME/.zshrc-$(date +%F)
+    mv $HOME/.zshrc $HOME/.zshrc-$RUNT
   fi
   ln -sf $SCRIPT_HOME/zshrc.sh $HOME/.zshrc
   
