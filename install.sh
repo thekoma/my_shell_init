@@ -9,10 +9,10 @@ done
 SCRIPT_HOME=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 RUNT=$(date +%F_%H-%M-%S)
 
-if [ $SHELLUSER == "root" ]; then
+if [ $USER == "root" ]; then
   SHELLUSER=$SUDO_USER
 else
-  SHELLUSER=$SHELLUSER
+  SHELLUSER=$USER
 fi
 
 HOMEDIR=$(eval echo ~$SHELLUSER)
