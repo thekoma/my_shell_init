@@ -81,8 +81,11 @@ function install_omz() {
     mv $HOMEDIR/.oh-my-zsh $HOMEDIR/.oh-my-zsh-$RUNT
   fi
   echo "Installing ohmyzsh and p10k scripts"
+  export ZSH=$HOMEDIR/.oh-my-zsh
+  export RUNZSH=no
+  export KEEP_ZSHRC=yes
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended > /dev/null 2>&1
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOMEDIR/.oh-my-zsh/custom}/themes/powerlevel10k > /dev/null 2>&1
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH}/custom/themes/powerlevel10k > /dev/null 2>&1
 }
 
 function configure_zsh() {
