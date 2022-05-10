@@ -131,12 +131,13 @@ function main() {
     INSTALL=0
     which zsh > /dev/null || INSTALL=1  2>&1
     if [ $INSTALL -gt 0 ] || [ ${FORCE:-0} -gt 0 ]; then
-        install_utils_apt >/dev/null
-        install_omz  >/dev/null
-        configure_zsh  >/dev/null
-        install_krew  >/dev/null
-        install_krew_utils  >/dev/null
-        switch_shell  >/dev/null
+        if [ ${FORCE:-0} -gt 0 ]; then echo "Forcing Install"; fi
+        install_utils_apt
+        install_omz
+        configure_zsh
+        install_krew
+        install_krew_utils
+        switch_shell
     else
         echo "ZSH is present. Assuming I'm already installed."
     fi
