@@ -136,6 +136,7 @@ function install_myself() {
 
 function correct_permissions() {
   # Deference is a bitch.
+  echo "Fixing permissions"
   find $HOMEDIR -type l -not -user $SHELLUSER -exec sudo chown -h $SHELLUSER:$SHELLUSER {} \;
   find $HOMEDIR -not -type l -not -user $SHELLUSER -exec sudo chown $SHELLUSER:$SHELLUSER {} \;
 }
