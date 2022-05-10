@@ -124,17 +124,20 @@ function install_myself() {
     ln -sf $ME $INIT_SCRIPT
   fi
 
-  if [ "$(crontab -l -u $SHELLUSER|grep -c $SCRIPT_HOME)" -lt 1 ]; then
+  if [ "$(crontab -l -u $SHELLUSER 2>/dev/null|grep -c $SCRIPT_HOME)" -lt 1 ]; then
     echo "Installing crontab"
     CRONTMP=$(mktemp)
-    crontab -l -u $SHELLUSER |grep -v $SCRIPT_HOME > $CRONTMP
+    crontab -l -u $SHELLUSER 2>/dev/null|grep -v $SCRIPT_HOME > $CRONTMP
     echo  -e "# Update shell init git\n0,15,30,45 * * * * git -C $SCRIPT_HOME pull -q" >> $CRONTMP
-    crontab $CRONTMP
+    crontab -u $SHELLUSER $CRONTMP
+    rm $CRONTMP
   fi
 }
 
 function correct_permissions() {
-  sudo chwon -R $SHELLUSER:$SHELLUSER $HOMEDIR
+  # Deference is a bitch.
+  find $HOMEDIR -type l -not -user $SHELLUSER -exec sudo chown -h $SHELLUSER:$SHELLUSER {} \;
+  find $HOMEDIR -not -type l -not -user $SHELLUSER -exec sudo chown $SHELLUSER:$SHELLUSER {} \;
 }
 
 function main() {
