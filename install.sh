@@ -143,7 +143,9 @@ function install_myself() {
     rm $CRONTMP
   fi
 }
-
+function upgrade_skaffold() {
+	sudo curl -Lo $(which skaffold) "https://storage.googleapis.com/skaffold/builds/latest/skaffold-linux-amd64"
+}
 function correct_permissions() {
   # Deference is a bitch.
   echo "Fixing permissions"
@@ -165,6 +167,7 @@ function main() {
         configure_zsh
         install_krew
         install_krew_utils
+	upgrade_skaffold
         switch_shell
     else
         echo "ZSH is present. Assuming I'm already installed."
